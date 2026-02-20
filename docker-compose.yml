@@ -1,0 +1,45 @@
+# Backend only. Run from shopify-Backend: docker compose up -d --build
+# Optional: use external DB by removing postgres + depends_on and setting DB_* in .env
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-shopify_help}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-shopify_help_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-shopify_help}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-shopify_help} -d ${POSTGRES_DB:-shopify_help}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      PORT: 5300
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB:-shopify_help}
+      DB_USER: ${POSTGRES_USER:-shopify_help}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-shopify_help_secret}
+      DB_SCHEMA: ${DB_SCHEMA:-shopify_return_cancel}
+      DB_SSL: "false"
+    ports:
+      - "5300:5300"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
