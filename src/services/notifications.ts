@@ -20,7 +20,7 @@ function getTransporter(): nodemailer.Transporter | null {
 
   if (!transporter) {
     const isGmail = SMTP_HOST.includes('gmail.com');
-    const options: nodemailer.TransportOptions = {
+    const options = {
       host: SMTP_HOST,
       port: SMTP_PORT,
       secure: SMTP_PORT === 465,
@@ -28,14 +28,10 @@ function getTransporter(): nodemailer.Transporter | null {
         user: SMTP_USER,
         pass: SMTP_PASS,
       },
+      ...(!isGmail && SMTP_HOST.includes('office365')
+        ? { tls: { ciphers: 'SSLv3', rejectUnauthorized: false } }
+        : {}),
     };
-    // Gmail: use default TLS. Office 365: use legacy ciphers option
-    if (!isGmail && SMTP_HOST.includes('office365')) {
-      (options as any).tls = {
-        ciphers: 'SSLv3',
-        rejectUnauthorized: false,
-      };
-    }
     transporter = nodemailer.createTransport(options);
   }
 
