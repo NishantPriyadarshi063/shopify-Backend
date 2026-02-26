@@ -29,9 +29,9 @@ router.post('/', async (req: Request, res: Response) => {
         error: 'Missing required fields: type, customer_email, customer_name, order_number',
       });
     }
-    const allowedTypes: HelpRequestType[] = ['cancel', 'return', 'refund'];
+    const allowedTypes: HelpRequestType[] = ['cancel', 'return', 'refund', 'exchange'];
     if (!allowedTypes.includes(type)) {
-      return res.status(400).json({ error: 'Invalid type. Must be cancel, return, or refund.' });
+      return res.status(400).json({ error: 'Invalid type. Must be cancel, return, refund, or exchange.' });
     }
 
     const openExists = await hasOpenRequestForOrder(order_number);

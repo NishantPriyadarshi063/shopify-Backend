@@ -1,4 +1,4 @@
-export type HelpRequestType = 'cancel' | 'return' | 'refund';
+export type HelpRequestType = 'cancel' | 'return' | 'refund' | 'exchange';
 
 export type HelpRequestStatus =
   | 'pending'

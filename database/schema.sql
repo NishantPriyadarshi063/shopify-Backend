@@ -31,7 +31,7 @@ COMMENT ON TABLE shopify_return_cancel.admin_users IS 'Admin users for dashboard
 -- =============================================================================
 CREATE TABLE IF NOT EXISTS shopify_return_cancel.help_requests (
   id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  type              VARCHAR(20) NOT NULL CHECK (type IN ('cancel', 'return', 'refund')),
+  type              VARCHAR(20) NOT NULL CHECK (type IN ('cancel', 'return', 'refund', 'exchange')),
   status            VARCHAR(20) NOT NULL DEFAULT 'pending'
     CHECK (status IN ('pending', 'in_progress', 'approved', 'rejected', 'completed')),
 
